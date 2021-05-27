@@ -1,17 +1,8 @@
-import { MapOptions } from '../../src/map/options';
+import { StructureOptions } from '../../src/structure/options';
 import { GUID } from '../../src/utils';
 
 import { default as setupJSDOM } from '../jsdom';
 import { assert } from 'chai';
-
-const DUMMY_PROPERTIES = {
-    first: {
-        values: [],
-    },
-    second: {
-        values: [],
-    },
-};
 
 const DUMMY_CALLBACK = () => {
     return { top: 0, left: 0 };
@@ -27,19 +18,15 @@ function traverseDOM(element: Element, callback: (element: Element) => void) {
     callback(element);
 }
 
-describe('MapOptions', () => {
+describe('StructureOptions', () => {
     before(() => {
         setupJSDOM();
     });
 
     it('can remove itself from DOM', () => {
         const root = document.createElement('div');
-        const options = new MapOptions(
-            root,
-            'this-is-my-id' as GUID,
-            DUMMY_PROPERTIES,
-            DUMMY_CALLBACK
-        );
+
+        const options = new StructureOptions(root, 'this-is-my-id' as GUID, DUMMY_CALLBACK);
         assert(root.innerHTML !== '');
         assert(document.body.innerHTML !== '');
 
@@ -52,7 +39,7 @@ describe('MapOptions', () => {
         const root = document.createElement('div');
 
         const guid = 'this-is-my-id' as GUID;
-        const options = new MapOptions(root, guid, DUMMY_PROPERTIES, DUMMY_CALLBACK);
+        const options = new StructureOptions(root, guid, DUMMY_CALLBACK);
         traverseDOM(document.body, (element) => {
             if (element.id) {
                 assert(element.id.includes(guid));

@@ -9,6 +9,8 @@
     "sourceMap": true,
     "lib": ["dom", "es5"]
   },
+  "include": ["./src"],
+  "exclude": ["./tests"],
   "typedocOptions": {
     "mode": "module",
     "inputFiles": "src",
