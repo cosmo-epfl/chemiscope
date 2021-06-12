@@ -12,7 +12,7 @@ import { Property } from '../dataset';
 
 import { EnvironmentIndexer, Indexes } from '../indexer';
 import { OptionModificationOrigin, SavedSettings } from '../options';
-import { GUID, PositioningCallback, arrayMaxMin } from '../utils';
+import { GUID, PositioningCallback, arrayMaxMin, generateGUID } from '../utils';
 import { enumerate, getByID, getFirstKey } from '../utils';
 
 import { MapData, NumericProperty } from './data';
@@ -186,13 +186,15 @@ export class PropertiesMap {
 
         this._data = new MapData(properties);
 
+        const guid = ('chsp-' + generateGUID()) as GUID;
         this._options = new MapOptions(
             this._root,
+            guid,
             this._data[this._indexer.mode],
             (rect) => this.positionSettingsModal(rect),
             config.settings
         );
-        this._colorReset = getByID<HTMLButtonElement>('chsp-color-reset');
+        this._colorReset = getByID<HTMLButtonElement>(`${guid}-map-color-reset`);
 
         this._connectSettings();
 

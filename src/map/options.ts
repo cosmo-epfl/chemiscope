@@ -7,7 +7,8 @@ import assert from 'assert';
 
 import { HTMLOption, OptionsGroup, SavedSettings } from '../options';
 import { optionValidator } from '../options';
-import { PositioningCallback, arrayMaxMin, getByID, makeDraggable, sendWarning } from '../utils';
+import { GUID, PositioningCallback } from '../utils';
+import { arrayMaxMin, getByID, makeDraggable, sendWarning } from '../utils';
 import { NumericProperties, NumericProperty } from './data';
 
 import { COLOR_MAPS } from './colorscales';
@@ -72,8 +73,8 @@ export class MapOptions extends OptionsGroup {
         reverse: HTMLOption<'boolean'>;
     };
 
-    /// The HTML buttom to open the settings modal
-    private _openSettings: HTMLElement;
+    /// The HTML button to open the settings modal
+    private _openModal: HTMLElement;
     /// The HTML element containing the settings modal
     private _modal: HTMLElement;
     // Callback to get the initial positioning of the settings modal.
@@ -81,6 +82,7 @@ export class MapOptions extends OptionsGroup {
 
     constructor(
         root: HTMLElement,
+        guid: GUID,
         properties: NumericProperties,
         positionSettings: PositioningCallback,
         settings: SavedSettings = {}
@@ -145,13 +147,13 @@ export class MapOptions extends OptionsGroup {
 
         this._positionSettingsModal = positionSettings;
 
-        const { openSettings, modal } = this._createSettingsHTML();
+        const { openModal, modal } = this._createSettingsHTML(guid);
         this._modal = modal;
-        this._openSettings = openSettings;
-        root.appendChild(this._openSettings);
+        this._openModal = openModal;
+        root.appendChild(this._openModal);
         document.body.appendChild(this._modal);
 
-        this._bind(properties);
+        this._bind(guid, properties);
         this.applySettings(settings);
     }
 
@@ -183,7 +185,7 @@ export class MapOptions extends OptionsGroup {
             (close as HTMLElement).click();
         }
         this._modal.remove();
-        this._openSettings.remove();
+        this._openModal.remove();
     }
 
     /** Is the current plot in 3D mode? */
@@ -283,25 +285,30 @@ export class MapOptions extends OptionsGroup {
 
     /**
      * Create the settings modal by adding HTML to the page
-     * @param  root root element in which the 'open settings' button will be placed
+     * @param  guid unique identifier of this map, used as prefix for all
+     *              elements ID
      * @return      the modal HTML element, not yet inserted in the document
      */
-    private _createSettingsHTML(): { openSettings: HTMLElement; modal: HTMLElement } {
+    private _createSettingsHTML(guid: GUID): { openModal: HTMLElement; modal: HTMLElement } {
         const template = document.createElement('template');
         template.innerHTML = `<button
             class="btn btn-light btn-sm chsp-viewer-button"
-            data-target='#chsp-settings'
+            data-target='#${guid}-map-settings'
             data-toggle="modal"
             style="top: 4px; left: 5px; opacity: 1;">
                 <div>${BARS_SVG}</div>
             </button>`;
-        const openSettings = template.content.firstChild as HTMLElement;
+        const openModal = template.content.firstChild as HTMLElement;
 
-        // TODO: set unique HTML id in the settings to allow multiple map in
-        // the same page
-        template.innerHTML = HTML_OPTIONS;
+        // replace id to ensure they are unique even if we have multiple viewers
+        // on a single page
+        // prettier-ignore
+        template.innerHTML = HTML_OPTIONS
+            .replace(/id="(.*?)"/g, (_: string, id: string) => `id="${guid}-${id}"`)
+            .replace(/for="(.*?)"/g, (_: string, id: string) => `for="${guid}-${id}"`)
+            .replace(/data-target="#(.*?)"/g, (_: string, id: string) => `data-target="#${guid}-${id}"`);
+
         const modal = template.content.firstChild as HTMLElement;
-
         const modalDialog = modal.childNodes[1] as HTMLElement;
         assert(modalDialog !== undefined);
         assert(modalDialog.classList.contains('modal-dialog'));
@@ -309,9 +316,9 @@ export class MapOptions extends OptionsGroup {
         makeDraggable(modalDialog, '.modal-header');
 
         // Position modal according to this._positionSettingsModal
-        openSettings.addEventListener('click', () => {
+        openModal.addEventListener('click', () => {
             // only set style once, on first open, and keep previous position
-            // on next open to keep the 'draged-to' position
+            // on next open to keep the 'dragged-to' position
             if (modalDialog.getAttribute('data-initial-modal-positions-set') === null) {
                 modalDialog.setAttribute('data-initial-modal-positions-set', 'true');
 
@@ -332,35 +339,36 @@ export class MapOptions extends OptionsGroup {
             }
         });
 
-        return { openSettings, modal };
+        return { openModal, modal };
     }
 
     /** Bind all options to the corresponding HTML elements */
-    private _bind(properties: NumericProperties): void {
+    private _bind(guid: GUID, properties: NumericProperties): void {
         // ======= data used as x values
-        const selectXProperty = getByID<HTMLSelectElement>('chsp-x');
+        const selectXProperty = getByID<HTMLSelectElement>(`${guid}-map-property-x`);
         selectXProperty.options.length = 0;
         for (const key in properties) {
             selectXProperty.options.add(new Option(key, key));
         }
         this.x.property.bind(selectXProperty, 'value');
-        this.x.min.bind('chsp-x-min', 'value');
-        this.x.max.bind('chsp-x-max', 'value');
-        this.x.scale.bind('chsp-x-scale', 'value');
+        this.x.min.bind(`${guid}-map-x-min`, 'value');
+        this.x.max.bind(`${guid}-map-x-max`, 'value');
+        this.x.scale.bind(`${guid}-map-x-scale`, 'value');
 
         // ======= data used as y values
-        const selectYProperty = getByID<HTMLSelectElement>('chsp-y');
+        const selectYProperty = getByID<HTMLSelectElement>(`${guid}-map-property-y`);
+
         selectYProperty.options.length = 0;
         for (const key in properties) {
             selectYProperty.options.add(new Option(key, key));
         }
         this.y.property.bind(selectYProperty, 'value');
-        this.y.min.bind('chsp-y-min', 'value');
-        this.y.max.bind('chsp-y-max', 'value');
-        this.y.scale.bind('chsp-y-scale', 'value');
+        this.y.min.bind(`${guid}-map-y-min`, 'value');
+        this.y.max.bind(`${guid}-map-y-max`, 'value');
+        this.y.scale.bind(`${guid}-map-y-scale`, 'value');
 
         // ======= data used as z values
-        const selectZProperty = getByID<HTMLSelectElement>('chsp-z');
+        const selectZProperty = getByID<HTMLSelectElement>(`${guid}-map-property-z`);
         // first option is 'none'
         selectZProperty.options.length = 0;
         selectZProperty.options.add(new Option('none', ''));
@@ -368,12 +376,12 @@ export class MapOptions extends OptionsGroup {
             selectZProperty.options.add(new Option(key, key));
         }
         this.z.property.bind(selectZProperty, 'value');
-        this.z.min.bind('chsp-z-min', 'value');
-        this.z.max.bind('chsp-z-max', 'value');
-        this.z.scale.bind('chsp-z-scale', 'value');
+        this.z.min.bind(`${guid}-map-z-min`, 'value');
+        this.z.max.bind(`${guid}-map-z-max`, 'value');
+        this.z.scale.bind(`${guid}-map-z-scale`, 'value');
 
         // ======= data used as color values
-        const selectColorProperty = getByID<HTMLSelectElement>('chsp-color');
+        const selectColorProperty = getByID<HTMLSelectElement>(`${guid}-map-property-color`);
         // first option is 'none'
         selectColorProperty.options.length = 0;
         selectColorProperty.options.add(new Option('none', ''));
@@ -381,11 +389,11 @@ export class MapOptions extends OptionsGroup {
             selectColorProperty.options.add(new Option(key, key));
         }
         this.color.property.bind(selectColorProperty, 'value');
-        this.color.min.bind('chsp-color-min', 'value');
-        this.color.max.bind('chsp-color-max', 'value');
+        this.color.min.bind(`${guid}-map-color-min`, 'value');
+        this.color.max.bind(`${guid}-map-color-max`, 'value');
 
         // ======= color palette
-        const selectPalette = getByID<HTMLSelectElement>('chsp-palette');
+        const selectPalette = getByID<HTMLSelectElement>(`${guid}-map-palette`);
         selectPalette.length = 0;
         for (const key in COLOR_MAPS) {
             selectPalette.options.add(new Option(key, key));
@@ -393,7 +401,7 @@ export class MapOptions extends OptionsGroup {
         this.palette.bind(selectPalette, 'value');
 
         // ======= marker symbols
-        const selectSymbolProperty = getByID<HTMLSelectElement>('chsp-symbol');
+        const selectSymbolProperty = getByID<HTMLSelectElement>(`${guid}-map-property-symbol`);
         // first option is 'default'
         selectSymbolProperty.options.length = 0;
         selectSymbolProperty.options.add(new Option('default', ''));
@@ -405,15 +413,15 @@ export class MapOptions extends OptionsGroup {
         this.symbol.bind(selectSymbolProperty, 'value');
 
         // ======= marker size
-        const selectSizeProperty = getByID<HTMLSelectElement>('chsp-size');
+        const selectSizeProperty = getByID<HTMLSelectElement>(`${guid}-map-property-size`);
         selectSizeProperty.options.length = 0;
         for (const key in properties) {
             selectSizeProperty.options.add(new Option(key, key));
         }
         this.size.property.bind(selectSizeProperty, 'value');
-        this.size.factor.bind('chsp-size-factor', 'value');
-        this.size.mode.bind('chsp-size-mode', 'value');
-        this.size.reverse.bind('chsp-size-reverse', 'checked');
+        this.size.factor.bind(`${guid}-map-size-factor`, 'value');
+        this.size.mode.bind(`${guid}-map-size-mode`, 'value');
+        this.size.reverse.bind(`${guid}-map-size-reverse`, 'checked');
     }
 
     /** Get the colorscale to use for markers in the main plotly trace */
