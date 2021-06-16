@@ -28,6 +28,8 @@ export interface Dataset {
      * the same size as the [[Dataset.environments|environments list]].
      */
     properties: { [name: string]: Property };
+
+    propertiesND?: { [name: string]: PropertyND };
     /**
      * List of atom-centered environments in the dataset.
      *
@@ -129,6 +131,25 @@ export interface Property {
     description?: string;
     /** unit of the property values */
     units?: string;
+}
+
+export interface PropertyND {
+    /** is this 2D/3D property associated with a full structure or a single atom? */
+    target: Target;
+    /**
+     * values of the property
+     * it only takes array of numbers for now and each element should forllow this
+     * format [[], [], []], where the inner arrays are the x, y and z(optional) axes
+     */
+    values: number[][][];
+    /** user-facing description of the property */
+    description?: string;
+    /** unit of the property values */
+    units?: string;
+    /** labels on the xaxis, yaxis and zaxis */
+    xlabel?: string;
+    ylabel?: string;
+    zlabel?: string;
 }
 
 /**
