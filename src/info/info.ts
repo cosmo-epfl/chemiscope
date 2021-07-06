@@ -5,7 +5,7 @@
 
 import assert from 'assert';
 
-import { Property } from '../dataset';
+import { Property, PropertyND } from '../dataset';
 import { EnvironmentIndexer, Indexes } from '../indexer';
 import { generateGUID, getByID } from '../utils';
 
@@ -24,7 +24,18 @@ function filter<T extends Record<string, Property>>(
     }
     return result;
 }
-
+function filterND<T extends Record<string, PropertyND>>(
+    obj: T,
+    predicate: (o: PropertyND) => boolean
+): Record<string, PropertyND> {
+    const result: Record<string, PropertyND> = {};
+    for (const key in obj) {
+        if (Object.hasOwnProperty.call(obj, key) && predicate(obj[key])) {
+            result[key] = obj[key];
+        }
+    }
+    return result;
+}
 /**
  * Information associated with the current structure or atom
  */
@@ -70,7 +81,12 @@ export class EnvironmentInfo {
      *                   environments index to structure/atom indexes
      * @param viewer     [[ViewersGrid]] from which we get the playback delay
      */
-    constructor(id: string, properties: { [name: string]: Property }, indexer: EnvironmentIndexer) {
+    constructor(
+        id: string,
+        properties: { [name: string]: Property },
+        indexer: EnvironmentIndexer,
+        propertiesND?: { [name: string]: PropertyND }
+    ) {
         this._root = getByID(id);
         this._indexer = indexer;
         this.onchange = () => {};
@@ -107,11 +123,25 @@ export class EnvironmentInfo {
         </div>`;
 
         const structureProperties = filter(properties, (p) => p.target === 'structure');
-        this._structure = this._createStructure(structureId, structureProperties);
+        if (propertiesND === undefined) {
+            this._structure = this._createStructure(structureId, structureProperties);
+        } else {
+            const structureProperties2D = filterND(propertiesND, (p) => p.target === 'structure');
+            this._structure = this._createStructure(
+                structureId,
+                structureProperties,
+                structureProperties2D
+            );
+        }
 
         if (this._indexer.mode === 'atom') {
             const atomProperties = filter(properties, (p) => p.target === 'atom');
-            this._atom = this._createAtom(atomId, atomProperties);
+            if (propertiesND === undefined) {
+                this._atom = this._createAtom(atomId, atomProperties);
+            } else {
+                const atomProperties2D = filterND(propertiesND, (p) => p.target === 'atom');
+                this._atom = this._createAtom(atomId, atomProperties, atomProperties2D);
+            }
         }
     }
 
@@ -151,15 +181,18 @@ export class EnvironmentInfo {
     }
 
     /** Create the structure slider and table */
-    private _createStructure(id: string, properties: { [name: string]: Property }): Info {
+    private _createStructure(
+        id: string,
+        properties: { [name: string]: Property },
+        properties2D?: { [name: string]: PropertyND }
+    ): Info {
         const slider = new Slider(this._root, 'structure');
         const n_structures = this._indexer.structuresCount();
         slider.reset(n_structures - 1);
 
         const tableRoot = this._root.children[0] as HTMLElement;
         assert(tableRoot.tagName.toLowerCase() === 'div');
-        const table = new Table(tableRoot, 'structure', id, properties);
-
+        const table = new Table(tableRoot, 'structure', id, properties, properties2D);
         slider.startPlayback = (advance) => this.startStructurePlayback(advance);
         slider.onchange = () => {
             if (this._atom !== undefined) {
@@ -214,7 +247,11 @@ export class EnvironmentInfo {
     }
 
     /** Create the atom slider and table */
-    private _createAtom(id: string, properties: { [name: string]: Property }) {
+    private _createAtom(
+        id: string,
+        properties: { [name: string]: Property },
+        properties2D?: { [name: string]: PropertyND }
+    ) {
         const slider = new Slider(this._root, 'atom');
         const n_atoms = this._indexer.atomsCount(this._structure.slider.value());
         slider.reset(n_atoms - 1);
@@ -230,7 +267,7 @@ export class EnvironmentInfo {
 
         const tableRoot = this._root.children[0] as HTMLElement;
         assert(tableRoot.tagName.toLowerCase() === 'div');
-        const table = new Table(tableRoot, 'atom', id, properties);
+        const table = new Table(tableRoot, 'atom', id, properties, properties2D);
 
         const number = this._root.querySelector(
             '.chsp-info-atom-btn .chsp-info-number'
