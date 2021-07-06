@@ -5,7 +5,12 @@ import ase
 from chemiscope import create_input
 
 TEST_FRAMES = [ase.Atoms("CO2")]
-
+TEST_FRAMES_DECORATED = [ase.Atoms("CO2"), ase.Atoms("NH3")]
+for f in TEST_FRAMES_DECORATED:
+    f.info["energy"] = 123.456
+    f.arrays["beauty"] = range(len(f.numbers))
+TEST_FRAMES_DECORATED[1].arrays["center_atoms_mask"] = [
+    True, False, False, False ] 
 
 class TestCreateInputMeta(unittest.TestCase):
     def test_meta(self):
@@ -236,8 +241,10 @@ class TestCreateInputProperties(unittest.TestCase):
 
     def test_wrong_number_of_values(self):
         properties = {"name": {"target": "atom", "values": [2, 3]}}
+        centers = [(0,0), (0,1), (0,2)]
         with self.assertRaises(Exception) as cm:
-            create_input(frames=TEST_FRAMES, properties=properties)
+            create_input(frames=TEST_FRAMES, properties=properties, 
+                         centers=centers)
         self.assertEqual(
             str(cm.exception),
             "wrong size for the property 'name' with target=='atom': "
@@ -266,7 +273,11 @@ class TestCreateInputEnvironments(unittest.TestCase):
             self.assertEqual(env["structure"], centers_list[i][0])
             self.assertEqual(env["center"], centers_list[i][1])
             self.assertEqual(env["cutoff"], centers_list[i][2])
-
+            
+    def test_ase_frames(self):
+        data = create_input(frames = TEST_FRAMES_DECORATED)
+        self.assertEqual(len(data["environments"]), 4)
+        self.assertEqual(len(data["properties"]["beauty"]["values"]), 4)
 
 
 if __name__ == "__main__":

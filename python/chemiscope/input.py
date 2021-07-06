@@ -9,7 +9,8 @@ import os
 
 import numpy as np
 
-from .adapters import frames_to_json, atom_properties, structure_properties
+from .adapters import (frames_to_json, atom_properties, atom_centers,
+                structure_properties)
 
 
 def create_input(frames, meta=None, properties=None, centers=None):
@@ -99,26 +100,42 @@ def create_input(frames, meta=None, properties=None, centers=None):
         data["meta"]["name"] = "<unknown>"
 
     data["structures"] = frames_to_json(frames)
-    n_structures = len(data["structures"])
-    n_atoms = sum(s["size"] for s in data["structures"])
+    n_structures = len(data["structures"])    
+    data["environments"] = []
+    if centers is None:
+        centers = []
+    n_centers = len(centers)
 
     data["properties"] = {}
     if properties is not None:
         for name, value in properties.items():
             _validate_property(name, value)
-            data["properties"].update(_linearize(name, value, n_structures, n_atoms))
+            if value["target"] == "atom" and n_centers == 0:
+                # Defaults to all centers, if an atom-center property is present
+                for i in range(n_structures):
+                    for j in range(data["structures"][i]["size"]):
+                        centers.append([i,j])
+                n_centers = len(centers)
+            data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     # Read properties coming from the frames
+    frames_atom_properties = atom_properties(frames)
+    if len(frames_atom_properties)>0:
+        #overrides centers with those coming from the frames
+        centers = atom_centers(frames)
+        if n_centers>0 and len(centers) != n_centers:
+            raise ValueError("Incompatible definition of atom centers")        
+        n_centers = len(centers)
+    data["environments"] = _generate_environments(centers)   
+        
     for name, value in atom_properties(frames).items():
         _validate_property(name, value)
-        data["properties"].update(_linearize(name, value, n_structures, n_atoms))
+        has_atom_properties = True
+        data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     for name, value in structure_properties(frames).items():
         _validate_property(name, value)
-        data["properties"].update(_linearize(name, value, n_structures, n_atoms))
-
-    if centers is not None:
-        data["environments"] = _generate_environments(centers)
+        data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     return data
 
@@ -222,7 +239,7 @@ def _typetransform(data, name):
             )
 
 
-def _linearize(name, property, n_structures, n_atoms):
+def _linearize(name, property, n_structures, n_centers):
     """
     Transform a property dict (containing "value", "target", "units",
     "description") with potential multi-dimensional "values" key to data that
@@ -236,7 +253,7 @@ def _linearize(name, property, n_structures, n_atoms):
                  messages
     :param property: dictionary containing the property data and metadata
     :param n_structures: total number of structures, to validate the array sizes
-    :param n_atoms: total number of atoms, to validate the array sizes
+    :param n_centers: total number of atoms, to validate the array sizes
     """
     data = {}
     if isinstance(property["values"], list):
@@ -282,10 +299,10 @@ def _linearize(name, property, n_structures, n_atoms):
 
     # Validate the properties size
     for prop in data.values():
-        if prop["target"] == "atom" and len(prop["values"]) != n_atoms:
+        if prop["target"] == "atom" and len(prop["values"]) != n_centers:
             raise Exception(
                 f"wrong size for the property '{name}' with target=='atom': "
-                + f"expected {n_atoms} values, got {len(prop['values'])}"
+                + f"expected {n_centers} values, got {len(prop['values'])}"
             )
 
         if prop["target"] == "structure" and len(prop["values"]) != n_structures:

@@ -72,6 +72,26 @@ def structure_properties(frames):
         raise Exception(f"unknown frame type: '{frames_list[0].__class__.__name__}'")
 
 
+def atom_centers(frames):
+    """
+    Extract centers information properties from the given ``frames``, and 
+    give them as a list compatible with :py:func:`create_input`.
+
+    This function is a shim calling specialized implementations for all the
+    supported frame types. Currently only `ase.Atoms` frames are supported.
+
+    :param frames: iterable over structures (typically a list of frames)
+    """
+    frames_list = list(frames)
+
+    if HAVE_ASE and isinstance(frames_list[0], ase.Atoms):
+        return _ase_atom_centers(frames_list)
+    elif HAVE_ASE and isinstance(frames_list[0], ase.Atom):
+        # deal with the user passing a single frame
+        return atom_centers([frames])
+    else:
+        raise Exception(f"unknown frame type: '{frames_list[0].__class__.__name__}'")
+
 def _ase_to_json(frame):
     """Implementation of frame_to_json for ase.Atoms"""
     data = {}
@@ -89,7 +109,7 @@ def _ase_to_json(frame):
 
 def _ase_atom_properties(frames):
     """Implementation of atom_properties for ase.Atoms"""
-    IGNORED_ASE_ARRAYS = ["positions", "numbers"]
+    IGNORED_ASE_ARRAYS = ["positions", "numbers", "center_atoms_mask"]
     # extract the set of common properties between all frames
     all_names = set()
     extra = set()
@@ -122,22 +142,34 @@ def _ase_atom_properties(frames):
         )
 
     # create property in the format expected by create_input
+    centers = _ase_atom_centers(frames)
     properties = {
-        name: {"target": "atom", "values": value}
+        name: {"target": "atom", "values": []}
         for name, value in frames[0].arrays.items()
         if name in all_names
     }
 
-    for frame in frames[1:]:
-        for name, value in frame.arrays.items():
-            if name not in all_names:
-                continue
-            properties[name]["values"] = np.concatenate(
-                [properties[name]["values"], value]
-            )
+    for name in properties.keys():
+        values = properties[name]["values"]
+        for i,j in  centers:
+            values.append(frames[i].arrays[name][j])
 
     _remove_invalid_properties(properties, "ASE")
     return properties
+
+def _ase_atom_centers(frames):
+    """Implementation of centers specification for ase.Atoms,
+    using the same atom mask mechanism used in librascal"""
+    
+    centers = []
+    for i, frame in enumerate(frames):
+        if "center_atoms_mask" in frame.arrays:
+            centers +=  [ (i, j) 
+              for j in np.where(frame.arrays["center_atoms_mask"])[0] ]
+        else:
+            centers += [ [i, j] for j in range(len(frame.numbers)) ]
+    return np.asarray(centers, dtype=int)
+
 
 
 def _ase_structure_properties(frames):
