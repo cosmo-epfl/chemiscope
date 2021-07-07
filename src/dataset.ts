@@ -169,7 +169,7 @@ export function validateDataset(o: JsObject): void {
     } else if (!Array.isArray(o.structures)) {
         throw Error('"structures" must be an array in the dataset');
     }
-    
+
     const [structureCount, atomCount] = checkStructures(o.structures);
     let envCount = atomCount;
 
