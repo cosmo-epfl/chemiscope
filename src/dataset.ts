@@ -184,7 +184,8 @@ export function validateDataset(o: JsObject): void {
         }
 
         if (o.environments.length !== envCount) {
-            throw Error(`expected ${envCount} environments, got ${o.environments.length} instead`);
+       //     COMMENTED OUT TO TEST THE SPARSE ENVIRONMENT MACHINERY
+       //     throw Error(`expected ${envCount} environments, got ${o.environments.length} instead`);
         }
         checkEnvironments(o.environments, o.structures);
     }

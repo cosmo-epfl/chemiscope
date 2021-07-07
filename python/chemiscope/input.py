@@ -140,7 +140,7 @@ def create_input(frames, meta=None, properties=None, centers=None):
     return data
 
 
-def write_input(path, frames, meta=None, properties=None, cutoff=None):
+def write_input(path, frames, meta=None, properties=None, centers=None):
     """
     Create the input JSON file used by the default chemiscope visualizer, and
     save it to the given ``path``.
@@ -203,7 +203,7 @@ def write_input(path, frames, meta=None, properties=None, cutoff=None):
     if not (path.endswith(".json") or path.endswith(".json.gz")):
         raise Exception("path should end with .json or .json.gz")
 
-    data = create_input(frames, meta, properties, cutoff)
+    data = create_input(frames, meta, properties, centers)
 
     if "name" not in data["meta"] or data["meta"]["name"] == "<unknown>":
         data["meta"]["name"] = os.path.basename(path).split(".")[0]
@@ -213,7 +213,7 @@ def write_input(path, frames, meta=None, properties=None, cutoff=None):
             file.write(json.dumps(data).encode("utf8"))
     else:
         with open(path, "w") as file:
-            json.dump(data, file)
+            json.dump(data, file, indent=2)
 
 
 def _typetransform(data, name):
@@ -323,7 +323,7 @@ def _generate_environments(centers, fixed_cutoff=3.5):
             frame, atom = center
             cutoff = fixed_cutoff
         environments.append(
-                {"structure": frame, "center": atom, "cutoff": cutoff}
+                {"structure": int(frame), "center": int(atom), "cutoff": cutoff}
         )
     return environments
 
