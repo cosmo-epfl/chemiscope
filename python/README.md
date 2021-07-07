@@ -24,13 +24,29 @@ import chemiscope
 # read frames using ase
 frames = ...
 
-# add additional properties
+# add additional properties for structures (one per structure)
+
 properties = {
     "<name>": {
-        target: "atom",
+        target: "structure",
         values: [3, 4, 2, 8, 9, 10],
     }
 }
 
-chemiscope.write_input("my-input.json.gz", frames, extra=properties)
+# ... and for atom-centered properties 
+properties = properties.update({
+    "<name>": {
+        target: "atom",
+        values: [3, 2, 3, 10],
+    }
+})
+
+# if you have atom properties you also need to specify which atoms
+# indices these properties refer to
+
+centers = [(0,2), (1,12), (1,18), (5, 7)]
+
+
+chemiscope.write_input("my-input.json.gz", frames, 
+           extra=properties, centers=centers)
 ```

@@ -169,7 +169,18 @@ export function validateDataset(o: JsObject): void {
     } else if (!Array.isArray(o.structures)) {
         throw Error('"structures" must be an array in the dataset');
     }
-    const [structureCount, envCount] = checkStructures(o.structures);
+
+    const [structureCount, atomCount] = checkStructures(o.structures);
+    let envCount = atomCount;
+
+    if ('environments' in o) {
+        if (!Array.isArray(o.environments)) {
+            throw Error('"environments" must be an array in the dataset');
+        }
+        // if environments are present, override the envCount = natoms set by checkStructures
+        envCount = o.environments.length;
+        checkEnvironments(o.environments, o.structures);
+    }
 
     if (!('properties' in o)) {
         throw Error('missing "properties" key in then dataset');
@@ -177,17 +188,6 @@ export function validateDataset(o: JsObject): void {
         throw Error('"properties" must be an object in the dataset');
     }
     checkProperties(o.properties as Record<string, JsObject>, structureCount, envCount);
-
-    if ('environments' in o) {
-        if (!Array.isArray(o.environments)) {
-            throw Error('"environments" must be an array in the dataset');
-        }
-
-        if (o.environments.length !== envCount) {
-            throw Error(`expected ${envCount} environments, got ${o.environments.length} instead`);
-        }
-        checkEnvironments(o.environments, o.structures);
-    }
 }
 
 function checkMetadata(o: JsObject) {

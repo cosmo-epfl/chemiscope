@@ -9,10 +9,15 @@ import os
 
 import numpy as np
 
-from .adapters import frames_to_json, atom_properties, structure_properties
+from .adapters import (
+    frames_to_json,
+    atom_properties,
+    atom_centers,
+    structure_properties,
+)
 
 
-def create_input(frames, meta=None, properties=None, cutoff=None):
+def create_input(frames, meta=None, properties=None, centers=None):
     """
     Create a dictionary that can be saved to JSON using the format used by
     the default chemiscope visualizer.
@@ -21,8 +26,9 @@ def create_input(frames, meta=None, properties=None, cutoff=None):
                         objects are supported
     :param dict meta: optional metadata of the dataset, see below
     :param dict properties: optional dictionary of additional properties, see below
-    :param float cutoff: optional. If present, will be used to generate
-                         atom-centered environments
+    :param list centers: optional list of (structure, center, cutoff) tuples/arrays
+                        specifying which centers have properties attached and how
+                        far out environments should be drawn by default
 
     The dataset metadata should be given in the ``meta`` dictionary, the
     possible keys are:
@@ -99,30 +105,48 @@ def create_input(frames, meta=None, properties=None, cutoff=None):
 
     data["structures"] = frames_to_json(frames)
     n_structures = len(data["structures"])
-    n_atoms = sum(s["size"] for s in data["structures"])
+    data["environments"] = []
+    if centers is None:
+        centers = []
+    n_centers = len(centers)
 
     data["properties"] = {}
     if properties is not None:
         for name, value in properties.items():
             _validate_property(name, value)
-            data["properties"].update(_linearize(name, value, n_structures, n_atoms))
+            if value["target"] == "atom" and n_centers == 0:
+                # Defaults to all centers, if an atom-center property is present
+                for i in range(n_structures):
+                    for j in range(data["structures"][i]["size"]):
+                        centers.append([i, j])
+                n_centers = len(centers)
+            data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     # Read properties coming from the frames
-    for name, value in atom_properties(frames).items():
+    frames_atom_properties = atom_properties(frames)
+    if len(frames_atom_properties) > 0:
+        # overrides centers with those coming from the frames
+        centers = atom_centers(frames)
+        if n_centers > 0 and len(centers) != n_centers:
+            raise ValueError("Incompatible definition of atom centers")
+        n_centers = len(centers)
+    data["environments"] = _generate_environments(centers)
+
+    for name, value in frames_atom_properties.items():
+        print("atom property ", name)
         _validate_property(name, value)
-        data["properties"].update(_linearize(name, value, n_structures, n_atoms))
+        data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     for name, value in structure_properties(frames).items():
         _validate_property(name, value)
-        data["properties"].update(_linearize(name, value, n_structures, n_atoms))
-
-    if cutoff is not None:
-        data["environments"] = _generate_environments(frames, cutoff)
+        if name in data["properties"]:
+            raise IndexError("Duplicate property name: ", name)
+        data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     return data
 
 
-def write_input(path, frames, meta=None, properties=None, cutoff=None):
+def write_input(path, frames, meta=None, properties=None, centers=None):
     """
     Create the input JSON file used by the default chemiscope visualizer, and
     save it to the given ``path``.
@@ -185,7 +209,7 @@ def write_input(path, frames, meta=None, properties=None, cutoff=None):
     if not (path.endswith(".json") or path.endswith(".json.gz")):
         raise Exception("path should end with .json or .json.gz")
 
-    data = create_input(frames, meta, properties, cutoff)
+    data = create_input(frames, meta, properties, centers)
 
     if "name" not in data["meta"] or data["meta"]["name"] == "<unknown>":
         data["meta"]["name"] = os.path.basename(path).split(".")[0]
@@ -195,7 +219,7 @@ def write_input(path, frames, meta=None, properties=None, cutoff=None):
             file.write(json.dumps(data).encode("utf8"))
     else:
         with open(path, "w") as file:
-            json.dump(data, file)
+            json.dump(data, file, indent=2)
 
 
 def _typetransform(data, name):
@@ -221,7 +245,7 @@ def _typetransform(data, name):
             )
 
 
-def _linearize(name, property, n_structures, n_atoms):
+def _linearize(name, property, n_structures, n_centers):
     """
     Transform a property dict (containing "value", "target", "units",
     "description") with potential multi-dimensional "values" key to data that
@@ -235,7 +259,7 @@ def _linearize(name, property, n_structures, n_atoms):
                  messages
     :param property: dictionary containing the property data and metadata
     :param n_structures: total number of structures, to validate the array sizes
-    :param n_atoms: total number of atoms, to validate the array sizes
+    :param n_centers: total number of atoms, to validate the array sizes
     """
     data = {}
     if isinstance(property["values"], list):
@@ -281,10 +305,10 @@ def _linearize(name, property, n_structures, n_atoms):
 
     # Validate the properties size
     for prop in data.values():
-        if prop["target"] == "atom" and len(prop["values"]) != n_atoms:
+        if prop["target"] == "atom" and len(prop["values"]) != n_centers:
             raise Exception(
                 f"wrong size for the property '{name}' with target=='atom': "
-                + f"expected {n_atoms} values, got {len(prop['values'])}"
+                + f"expected {n_centers} values, got {len(prop['values'])}"
             )
 
         if prop["target"] == "structure" and len(prop["values"]) != n_structures:
@@ -296,18 +320,17 @@ def _linearize(name, property, n_structures, n_atoms):
     return data
 
 
-def _generate_environments(frames, cutoff):
-    if not isinstance(cutoff, float):
-        raise Exception(
-            f"cutoff must be a float, got '{cutoff}' of type {type(cutoff)}"
-        )
-
+def _generate_environments(centers, fixed_cutoff=3.5):
     environments = []
-    for frame_id, frame in enumerate(frames):
-        for center in range(len(frame)):
-            environments.append(
-                {"structure": frame_id, "center": center, "cutoff": cutoff}
-            )
+    for center in centers:
+        if len(center) == 3:
+            frame, atom, cutoff = center
+        else:
+            frame, atom = center
+            cutoff = fixed_cutoff
+        environments.append(
+            {"structure": int(frame), "center": int(atom), "cutoff": cutoff}
+        )
     return environments
 
 
