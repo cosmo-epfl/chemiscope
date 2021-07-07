@@ -119,7 +119,7 @@ def create_input(frames, meta=None, properties=None, centers=None):
             data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     # Read properties coming from the frames
-    frames_atom_properties = atom_properties(frames)
+    frames_atom_properties = atom_properties(frames)    
     if len(frames_atom_properties)>0:
         #overrides centers with those coming from the frames
         centers = atom_centers(frames)
@@ -128,13 +128,15 @@ def create_input(frames, meta=None, properties=None, centers=None):
         n_centers = len(centers)
     data["environments"] = _generate_environments(centers)   
         
-    for name, value in atom_properties(frames).items():
+    for name, value in frames_atom_properties.items():
+        print("atom property ", name)
         _validate_property(name, value)
-        has_atom_properties = True
         data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     for name, value in structure_properties(frames).items():
         _validate_property(name, value)
+        if name in data["properties"]:
+            raise IndexError("Duplicate property name: ", name)
         data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     return data
