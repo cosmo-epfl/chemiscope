@@ -13,7 +13,7 @@ import { Property } from '../dataset';
 import { EnvironmentIndexer, Indexes } from '../indexer';
 import { OptionModificationOrigin, SavedSettings } from '../options';
 import { GUID, PositioningCallback, arrayMaxMin, sendWarning } from '../utils';
-import { enumerate, getByID, getFirstKey } from '../utils';
+import { enumerate, getByID, getElement, getFirstKey } from '../utils';
 
 import { MapData, NumericProperty } from './data';
 import { MarkerData } from './marker';
@@ -210,13 +210,14 @@ export class PropertiesMap {
      * Create a new [[PropertiesMap]] inside the DOM element with the given HTML
      * `id`
      *
-     * @param id         HTML id of the DOM element where the map should live
+     * @param element   HTML element or string 'id' of the element where
+     *                   the map should live
      * @param indexer    [[EnvironmentIndexer]] used to translate indexes from
      *                   environments index to structure/atom indexes
      * @param properties properties to be displayed
      */
     constructor(
-        config: { id: string; settings: SavedSettings },
+        config: { element: string | HTMLElement; settings: SavedSettings },
         indexer: EnvironmentIndexer,
         properties: { [name: string]: Property }
     ) {
@@ -225,7 +226,8 @@ export class PropertiesMap {
         this.activeChanged = () => {};
         this._selected = new Map<GUID, MarkerData>();
 
-        this._root = getByID(config.id);
+        this._root = getElement(config.element);
+
         if (this._root.style.position === '') {
             this._root.style.position = 'relative';
         }
@@ -657,8 +659,8 @@ export class PropertiesMap {
         };
 
         // ======= markers size
-        // setup initial state of the z axis settings
-        if (this._options.size.mode.value === 'constant') {
+        // setup initial state of the marker size settings
+        if (this._options.size.mode.value === '') {
             this._options.size.property.disable();
             this._options.size.reverse.disable();
         } else {
@@ -666,12 +668,12 @@ export class PropertiesMap {
             this._options.size.reverse.enable();
         }
 
-        this._options.size.mode.onchange = () => {
-            if (this._options.size.mode.value !== 'constant') {
-                this._options.size.property.enable();
+        this._options.size.property.onchange = () => {
+            if (this._options.size.property.value !== '') {
+                this._options.size.mode.enable();
                 this._options.size.reverse.enable();
             } else {
-                this._options.size.property.disable();
+                this._options.size.mode.disable();
                 this._options.size.reverse.disable();
             }
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
@@ -681,7 +683,7 @@ export class PropertiesMap {
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
         };
 
-        this._options.size.property.onchange = () => {
+        this._options.size.mode.onchange = () => {
             this._restyle({ 'marker.size': this._sizes(0) } as Data, 0);
         };
 
@@ -945,7 +947,14 @@ export class PropertiesMap {
      * all of them if `trace === undefined`.
      */
     private _sizes(trace?: number): Array<number | number[]> {
-        const sizes = this._property(this._options.size.property.value).values;
+        let sizes;
+        if (this._options.size.property.value !== '') {
+            sizes = this._property(this._options.size.property.value).values;
+        } else {
+            sizes = new Array(this._property(this._options.x.property.value).values.length).fill(
+                1.0
+            );
+        }
         const values = this._options.calculateSizes(sizes);
         const selected = [];
         if (this._is3D()) {
