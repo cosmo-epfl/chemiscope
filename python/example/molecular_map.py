@@ -4,11 +4,11 @@ features computed by librascal, and exported as a chemiscope json.
 """
 
 import numpy as np
-from ase.io import read, write
+from ase.io import read
 from rascal.representations import SphericalInvariants
 from rascal.neighbourlist.structure_manager import mask_center_atoms_by_species
 from sklearn.decomposition import PCA
-from chemiscope import write_input, create_input
+from chemiscope import write_input
 
 import urllib.request
 
