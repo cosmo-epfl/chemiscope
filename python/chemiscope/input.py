@@ -9,8 +9,12 @@ import os
 
 import numpy as np
 
-from .adapters import (frames_to_json, atom_properties, atom_centers,
-                structure_properties)
+from .adapters import (
+    frames_to_json,
+    atom_properties,
+    atom_centers,
+    structure_properties,
+)
 
 
 def create_input(frames, meta=None, properties=None, centers=None):
@@ -100,7 +104,7 @@ def create_input(frames, meta=None, properties=None, centers=None):
         data["meta"]["name"] = "<unknown>"
 
     data["structures"] = frames_to_json(frames)
-    n_structures = len(data["structures"])    
+    n_structures = len(data["structures"])
     data["environments"] = []
     if centers is None:
         centers = []
@@ -114,20 +118,20 @@ def create_input(frames, meta=None, properties=None, centers=None):
                 # Defaults to all centers, if an atom-center property is present
                 for i in range(n_structures):
                     for j in range(data["structures"][i]["size"]):
-                        centers.append([i,j])
+                        centers.append([i, j])
                 n_centers = len(centers)
             data["properties"].update(_linearize(name, value, n_structures, n_centers))
 
     # Read properties coming from the frames
-    frames_atom_properties = atom_properties(frames)    
-    if len(frames_atom_properties)>0:
-        #overrides centers with those coming from the frames
+    frames_atom_properties = atom_properties(frames)
+    if len(frames_atom_properties) > 0:
+        # overrides centers with those coming from the frames
         centers = atom_centers(frames)
-        if n_centers>0 and len(centers) != n_centers:
-            raise ValueError("Incompatible definition of atom centers")        
+        if n_centers > 0 and len(centers) != n_centers:
+            raise ValueError("Incompatible definition of atom centers")
         n_centers = len(centers)
-    data["environments"] = _generate_environments(centers)   
-        
+    data["environments"] = _generate_environments(centers)
+
     for name, value in frames_atom_properties.items():
         print("atom property ", name)
         _validate_property(name, value)
@@ -325,7 +329,7 @@ def _generate_environments(centers, fixed_cutoff=3.5):
             frame, atom = center
             cutoff = fixed_cutoff
         environments.append(
-                {"structure": int(frame), "center": int(atom), "cutoff": cutoff}
+            {"structure": int(frame), "center": int(atom), "cutoff": cutoff}
         )
     return environments
 

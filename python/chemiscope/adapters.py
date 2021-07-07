@@ -74,7 +74,7 @@ def structure_properties(frames):
 
 def atom_centers(frames):
     """
-    Extract centers information properties from the given ``frames``, and 
+    Extract centers information properties from the given ``frames``, and
     give them as a list compatible with :py:func:`create_input`.
 
     This function is a shim calling specialized implementations for all the
@@ -91,6 +91,7 @@ def atom_centers(frames):
         return atom_centers([frames])
     else:
         raise Exception(f"unknown frame type: '{frames_list[0].__class__.__name__}'")
+
 
 def _ase_to_json(frame):
     """Implementation of frame_to_json for ase.Atoms"""
@@ -151,25 +152,24 @@ def _ase_atom_properties(frames):
 
     for name in properties.keys():
         values = properties[name]["values"]
-        for i,j in  centers:
+        for i, j in centers:
             values.append(frames[i].arrays[name][j])
 
     _remove_invalid_properties(properties, "ASE")
     return properties
 
+
 def _ase_atom_centers(frames):
     """Implementation of centers specification for ase.Atoms,
     using the same atom mask mechanism used in librascal"""
-    
+
     centers = []
     for i, frame in enumerate(frames):
         if "center_atoms_mask" in frame.arrays:
-            centers +=  [ (i, j) 
-              for j in np.where(frame.arrays["center_atoms_mask"])[0] ]
+            centers += [(i, j) for j in np.where(frame.arrays["center_atoms_mask"])[0]]
         else:
-            centers += [ [i, j] for j in range(len(frame.numbers)) ]
+            centers += [[i, j] for j in range(len(frame.numbers))]
     return np.asarray(centers, dtype=int)
-
 
 
 def _ase_structure_properties(frames):
