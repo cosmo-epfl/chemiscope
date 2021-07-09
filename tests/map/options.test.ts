@@ -12,6 +12,9 @@ const DUMMY_PROPERTIES = {
     second: {
         values: [],
     },
+    third: {
+        values: [],
+    },
 };
 const DUMMY_CALLBACK = () => {
     return { top: 0, left: 0 };
@@ -33,7 +36,7 @@ describe('MapOptions', () => {
         assert(document.body.innerHTML === KARMA_INSERTED_HTML);
     });
 
-    it('scale label for min/max switches between linear and log', () => {
+    it('selected scale label for min/max switches between linear and log', () => {
         const root = document.createElement('div');
         const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
 
@@ -49,6 +52,9 @@ describe('MapOptions', () => {
             // change from linear (default) to log scale
             selectElement.value = 'log';
             selectElement.dispatchEvent(new Event('change'));
+
+            assert(axisOptions.scale.value === 'log');
+
             options.setLogLabel(axisOptions, axisName);
             assert(min.innerHTML === 'min: 10^');
             assert(max.innerHTML === 'max: 10^');
@@ -56,9 +62,60 @@ describe('MapOptions', () => {
             // change back from log to linear
             selectElement.value = 'linear';
             selectElement.dispatchEvent(new Event('change'));
+
+            assert(axisOptions.scale.value === 'linear');
+
             options.setLogLabel(axisOptions, axisName);
             assert(min.innerHTML === 'min:');
             assert(max.innerHTML === 'max:');
         }
+    });
+
+    it('selected property changes when changed', () => {
+        const root = document.createElement('div');
+        const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
+
+        checkPropertySelect(options.x, 'x');
+        checkPropertySelect(options.y, 'y');
+        checkPropertySelect(options.z, 'z');
+        checkPropertySelect(options.color, 'color');
+
+        function checkPropertySelect(axisOptions: AxisOptions, axisName: string) {
+            const selectElement = getByID<HTMLSelectElement>(`chsp-${axisName}`);
+            selectElement.value = 'second';
+            selectElement.dispatchEvent(new window.Event('change'));
+            assert(axisOptions.property.value === 'second');
+        }
+    });
+
+    it('selected range changes when changed', () => {
+        const root = document.createElement('div');
+        const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
+
+        checkRangeSelect(options.x, 'x');
+        checkRangeSelect(options.y, 'y');
+        checkRangeSelect(options.z, 'z');
+
+        function checkRangeSelect(axisOptions: AxisOptions, axisName: string) {
+            const minSelectElement = getByID<HTMLSelectElement>(`chsp-${axisName}-min`);
+            const maxSelectElement = getByID<HTMLSelectElement>(`chsp-${axisName}-max`);
+
+            minSelectElement.value = '0.01';
+            minSelectElement.dispatchEvent(new window.Event('change'));
+            assert(axisOptions.min.value === 0.01);
+
+            maxSelectElement.value = '1.01';
+            maxSelectElement.dispatchEvent(new window.Event('change'));
+            assert(axisOptions.max.value === 1.01);
+        }
+    });
+
+    it('selected size changes when changed', () => {
+        const root = document.createElement('div');
+        const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
+        const selectElement = getByID<HTMLSelectElement>(`chsp-size`);
+        selectElement.value = 'second';
+        selectElement.dispatchEvent(new window.Event('change'));
+        assert(options.size.property.value === 'second');
     });
 });
