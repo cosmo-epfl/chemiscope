@@ -114,8 +114,19 @@ describe('MapOptions', () => {
         const root = document.createElement('div');
         const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
         const selectElement = getByID<HTMLSelectElement>(`chsp-size`);
+
         selectElement.value = 'second';
         selectElement.dispatchEvent(new window.Event('change'));
         assert(options.size.property.value === 'second');
+    });
+
+    it('slider size changes when changed', () => {
+        const root = document.createElement('div');
+        const options = new MapOptions(root, DUMMY_PROPERTIES, DUMMY_CALLBACK);
+        const sliderElement = getByID<HTMLInputElement>(`chsp-size-factor`);
+
+        sliderElement.value = '100';
+        sliderElement.dispatchEvent(new window.Event('change'));
+        assert(options.size.factor.value === 100);
     });
 });
