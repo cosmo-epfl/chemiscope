@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Chemiscope: interactive structure/property explorer for materials and molecules &#8212; chemiscope dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/chemiscope.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="User tutorial" href="tutorial.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+<div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://chemiscope.org"> chemiscope</a>
+            <span class="navbar-text navbar-version pull-left"><b></b></span>
+        </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+            <ul class="nav navbar-nav">
+                
+                <li><a href="#">Documentation</a></li>        
+  <li>
+    <a href="tutorial.html" title="Next Chapter: User tutorial"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">User tutorial &raquo;</span>
+    </a>
+  </li>
+                    
+            </ul>
+
+             
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form> 
+        </div>
+    </div>
+</div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">User tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#introduction-to-structural-properties">Introduction to structural properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#different-panels-and-settings">Different panels and settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#input-file-format-for-chemiscope">Input file format for chemiscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-standalone-visualizer">Using the standalone visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="embedding.html">Chemiscope as a library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#getting-and-building-the-code">Getting and building the code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#usage-example">Usage example</a></li>
+</ul>
+</li>
+</ul>
+
+<form action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <section id="chemiscope-interactive-structure-property-explorer-for-materials-and-molecules">
+<h1>Chemiscope: interactive structure/property explorer for materials and molecules<a class="headerlink" href="#chemiscope-interactive-structure-property-explorer-for-materials-and-molecules" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the documentation of the <a class="reference external" href="https://chemiscope.org">chemiscope</a> visualization tool, an
+interactive structure/property explorer for materials and molecules. The goal of
+chemiscope is to provide interactive exploration of large databases of materials
+and molecules and help researchers to find structure-properties correlations
+inside such databases. The screenshot below shows an example of such database
+being visualized with chemiscope. The first part of this documentation describes
+the default interface of chemiscope and how to use it with your own database.</p>
+<figure class="align-center" id="id1">
+<img alt="_images/screenshot.png" src="_images/screenshot.png" />
+<figcaption>
+<p><span class="caption-text">Screenshot of the <a class="reference external" href="https://doi.org/10.1088/1367-2630/15/9/095003">Qm7b</a> database visualized in the default chemiscope viewer</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Chemiscope is built around re-usable components, that can be arranged in
+different manners to create visualization adapted to different kinds of data. The
+second part of this documentation explains how to build the code and use it in
+your own website to create new interfaces.</p>
+<section id="citing-chemiscope">
+<h2>Citing chemiscope<a class="headerlink" href="#citing-chemiscope" title="Permalink to this headline">¶</a></h2>
+<p>Chemiscope is distributed under an open-source license, and you are welcome to
+use it and incorporate it into your own research and software projects.
+If you find it useful, we would appreciate a citation to the chemiscope
+<a class="reference external" href="https://doi.org/10.21105/joss.02117">paper</a>:</p>
+<p>G. Fraux, R. K. Cersonsky, M. Ceriotti, <em>Chemiscope: Interactive
+Structure-Property Explorer for Materials and Molecules.</em> <strong>Journal of Open
+Source Software</strong> 5 (51), 2117 (2020)</p>
+<p>If you incorporate chemiscope components into a software project, a link
+back to the <a class="reference external" href="https://chemiscope.org">chemiscope</a> homepage is the preferred form of acknowledgement.</p>
+</section>
+<section id="what-s-in-this-documentation">
+<h2>What’s in this documentation?<a class="headerlink" href="#what-s-in-this-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">User tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#introduction-to-structural-properties">Introduction to structural properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#different-panels-and-settings">Different panels and settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#input-file-format-for-chemiscope">Input file format for chemiscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#using-the-standalone-visualizer">Using the standalone visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="embedding.html">Chemiscope as a library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#getting-and-building-the-code">Getting and building the code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#usage-example">Usage example</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Guillaume Fraux.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>User tutorial &#8212; chemiscope dev documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/chemiscope.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Chemiscope as a library" href="embedding.html" />
+    <link rel="prev" title="Chemiscope: interactive structure/property explorer for materials and molecules" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+<div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://chemiscope.org"> chemiscope</a>
+            <span class="navbar-text navbar-version pull-left"><b></b></span>
+        </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+            <ul class="nav navbar-nav">
+                
+                <li><a href="index.html">Documentation</a></li>        
+  <li>
+    <a href="index.html" title="Previous Chapter: Chemiscope: interactive structure/property explorer for materials and molecules"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Chemiscope: i...</span>
+    </a>
+  </li>
+  <li>
+    <a href="embedding.html" title="Next Chapter: Chemiscope as a library"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">Chemiscope as... &raquo;</span>
+    </a>
+  </li>
+                    
+            </ul>
+
+             
+<form class="navbar-form navbar-right" action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form> 
+        </div>
+    </div>
+</div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-3">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-structural-properties">Introduction to structural properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#different-panels-and-settings">Different panels and settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#input-file-format-for-chemiscope">Input file format for chemiscope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-the-standalone-visualizer">Using the standalone visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="embedding.html">Chemiscope as a library</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#getting-and-building-the-code">Getting and building the code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="embedding.html#usage-example">Usage example</a></li>
+</ul>
+</li>
+</ul>
+
+<form action="search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+        </div>
+      </div>
+    <div class="body col-md-9 content" role="main">
+      
+  <section id="user-tutorial">
+<h1>User tutorial<a class="headerlink" href="#user-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This tutorial will present how to use the <a class="reference external" href="https://chemiscope.org">default chemiscope visualizer</a> with your own database: the different panels and related
+settings; as well as how to create an input file for it.</p>
+<section id="introduction-to-structural-properties">
+<h2>Introduction to structural properties<a class="headerlink" href="#introduction-to-structural-properties" title="Permalink to this headline">¶</a></h2>
+<p>Before we get started, we will introduce a few concepts that underlie the
+concept and the usage of chemiscope. Chemiscope is designed to help navigating
+<em>structure-property maps</em>, i.e. 2D or 3D representations of a set of
+atomic scale entities that reflect how structure influences materials
+properties.</p>
+<p>Chemiscope can work with two kinds of entities: full structures, or
+atom-centred environments. A structure consists in a set of atoms, possibly
+representing the periodic repeat unit of an infinite structure. An
+environment consists in a set of atoms that surround a central atom,
+In both cases, these entities are fully defined by the position and nature
+of the atoms present in the structure, or in the neighborhood of the
+environment center.</p>
+<p>For each structure or environment, one may have computed <em>properties</em>,
+e.g. the cohesive energy of a molecule, or the NMR chemical shielding of
+a nucleus, or <em>structural representations</em>, i.e. functions of the
+spatial arrangement of the atoms that incorporate some fundamental
+symmetries to achieve a description of the structure that is as complete
+as possible, yet concise. Examples of such representations are for instance
+<a class="reference external" href="soap">atom density representationis</a> or <a class="reference external" href="Behler-Parrinello">Behler-Parrinello
+symmetry functions</a>. These representations are usually
+high-dimensional vectors, hard to visualize and interpret. For this reason, one
+usually applies a dimensionality reduction algorithm, such as <a class="reference external" href="https://en.wikipedia.org/wiki/Principal_component_analysis">PCA</a>, <a class="reference external" href="https://doi.org/10.1073/pnas.1108486108">sketch-map</a>,
+<em>etc.</em>   The interpretation of the resulting  will differ depending on both the
+descriptor used to represent the structures or environments and the
+dimensionality reduction algorithm applied.</p>
+<p>Chemiscope simplifies visualizing the correlations between structural
+representations and properties associated with structures and environments,
+by representing in an interactive fashion these atomic-scale entities as points
+on a map, and by associating these points with an explicit, 3D visualization
+of the structure of the material or molecule.</p>
+<figure class="align-default" id="id1">
+<a class="reference internal image-reference" href="_images/mol-to-map.svg"><img alt="_images/mol-to-map.svg" src="_images/mol-to-map.svg" width="65%" /></a>
+<figcaption>
+<p><span class="caption-text">Illustration of the process used to create structural properties from a
+molecule.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Chemiscope is completly agnostic with respect to how properties and structural
+representations are generated, and do not provide any facilities to generate them.
+In the rest of this document, we will refer to properties describing
+the structure of an environment or structure as <em>structural properties</em>
+and other associated properties associated (such as energy, density, …) as
+<em>physical properties</em>.</p>
+</section>
+<section id="different-panels-and-settings">
+<h2>Different panels and settings<a class="headerlink" href="#different-panels-and-settings" title="Permalink to this headline">¶</a></h2>
+<p>The default chemiscope visualizer is organized in three main panels: the map,
+the structure viewer and the environment information display. Additionally,
+clicking on the dataset title (on top of the map) will display some metadata
+about the dataset (description, authors, references). This section will
+present each one, as well as the main settings accessible to customize the
+display.</p>
+<p>The map is a 2D or 3D scatter plot showing properties for all the environments
+in the dataset. You can set which properties (structural or physical) should be
+used a the x, y, and potentially z axis; as well as for color and size of the
+points. Additionally, properties which have string values (an not numeric
+values) can be used as category data to set the symbols used for the points. To
+open the settings modal window, click on the hamburger menu (the ☰ symbol) on
+the left of the dataset title.</p>
+<figure class="align-default" id="id2">
+<a class="reference internal image-reference" href="_images/map.png"><img alt="_images/map.png" src="_images/map.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-text">The map panel in 2D mode and the related settings</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>The structure panel is a 3D molecular viewer based on <a class="reference external" href="http://jmol.org">Jmol</a>. The settings are
+accessible through the hamburger menu (☰) on the right of the viewer. The
+settings are grouped into <strong>representation</strong> (how is the molecule rendered);
+<strong>supercell</strong> (how many copies of the unit cell to display); <strong>environments</strong>
+(how atom-centered environments are displayed); <strong>camera</strong> (reset the camera in
+along one of the given axis); and <strong>trajectory</strong> (playback related settings).</p>
+<figure class="align-default" id="id3">
+<a class="reference internal image-reference" href="_images/structure.png"><img alt="_images/structure.png" src="_images/structure.png" style="width: 80%;" /></a>
+<figcaption>
+<p><span class="caption-text">The structure panel and related settings</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Finally, the environments information panel features sliders and text input to
+allow for an easy selection of the environment of interest. The play button on
+the left of the sliders activates the trajectory playback, looping over the
+structures in the datasets or the atoms in a structure. By clicking on the
+labels at the top (<em>structure XXX</em> and*atom XXX*), one can hide or show the
+full property tables. These tables show all properties in the dataset for the
+currently selected environment.</p>
+<figure class="align-default" id="id4">
+<a class="reference internal image-reference" href="_images/info.png"><img alt="_images/info.png" src="_images/info.png" style="width: 40%;" /></a>
+<figcaption>
+<p><span class="caption-text">The environment information panel fully expanded</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="input-file-format-for-chemiscope">
+<h2>Input file format for chemiscope<a class="headerlink" href="#input-file-format-for-chemiscope" title="Permalink to this headline">¶</a></h2>
+<p>When using the default chemiscope interface, all the structures and properties
+in a dataset are loaded from a single JSON file. This sections describe how to
+generate such JSON file, either using a pre-existing python script that does
+most of the work for you, or by writing the JSON file directly. Since the
+resulting JSON file can be quite large and thus harder to share with
+collaborators, the default chemiscope interface also allows to load JSON files
+compressed with gzip.</p>
+<section id="creating-an-input-file">
+<h3>Creating an input file<a class="headerlink" href="#creating-an-input-file" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to create a JSON input file is to use the <code class="docutils literal notranslate"><span class="pre">chemiscope</span></code>
+package. Install the package with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">chemiscope</span></code>, and use
+<a class="reference internal" href="#chemiscope.write_input" title="chemiscope.write_input"><code class="xref py py-func docutils literal notranslate"><span class="pre">chemiscope.write_input()</span></code></a> or <a class="reference internal" href="#chemiscope.create_input" title="chemiscope.create_input"><code class="xref py py-func docutils literal notranslate"><span class="pre">chemiscope.create_input()</span></code></a> in your
+own script to generate the JSON file. This script assumes you use the <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/io/io.html">ase</a>
+Python module to read the structures.</p>
+<p>If all the properties you want to include into chemiscope are already stored in
+a file <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/io/io.html">ase</a> can read, the <code class="docutils literal notranslate"><span class="pre">chemiscope</span></code> python package also install a
+<code class="docutils literal notranslate"><span class="pre">chemiscope-input</span></code> command line script. Note that chemiscope does not compute
+structural representations or dimensionality reduction. The <a class="reference external" href="https://github.com/BingqingCheng/ASAP">ASAP</a> structural
+analysis package is another tool that can directly generate an output in
+chemiscope format.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="chemiscope.write_input">
+<span class="sig-prename descclassname"><span class="pre">chemiscope.</span></span><span class="sig-name descname"><span class="pre">write_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chemiscope.write_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the input JSON file used by the default chemiscope visualizer, and
+save it to the given <code class="docutils literal notranslate"><span class="pre">path</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – name of the file to use to save the json data. If it ends
+with ‘.gz’, a gzip compressed file will be written</p></li>
+<li><p><strong>frames</strong> (<em>list</em>) – list of atomic structures. For now, only <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/atoms.html">ase.Atoms</a>
+objects are supported</p></li>
+<li><p><strong>meta</strong> (<em>dict</em>) – optional metadata of the dataset</p></li>
+<li><p><strong>properties</strong> (<em>dict</em>) – optional dictionary of additional properties</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – optional. If present, will be used to generate
+atom-centered environments</p></li>
+<li><p><strong>composition</strong> (<em>bool</em>) – optional. False by default. If True, will add to
+the structure and atom properties information
+about chemical composition</p></li>
+</ul>
+</dd>
+</dl>
+<p>This function uses <a class="reference internal" href="#chemiscope.create_input" title="chemiscope.create_input"><code class="xref py py-func docutils literal notranslate"><span class="pre">create_input()</span></code></a> to generate the input data, see
+the documentation of this function for more information.</p>
+<p>Here is a quick example of generating a chemiscope input reading the
+structures from a file that <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/io/io.html">ase</a> can read, and performing PCA
+using <a class="reference external" href="https://scikit-learn.org/">sklearn</a> on a descriptor computed with another package.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">ase</span>
+<span class="kn">from</span> <span class="nn">ase</span> <span class="kn">import</span> <span class="n">io</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sklearn</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">decomposition</span>
+<span class="kn">from</span> <span class="nn">chemiscope</span> <span class="kn">import</span> <span class="n">write_input</span>
+
+<span class="n">frames</span> <span class="o">=</span> <span class="n">ase</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s1">&#39;trajectory.xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
+
+<span class="c1"># example property 1: list containing the energy of each structure,</span>
+<span class="c1"># from calculations performed beforehand</span>
+<span class="n">energies</span> <span class="o">=</span> <span class="p">[</span> <span class="o">...</span> <span class="p">]</span>
+
+
+<span class="c1"># example property 2: PCA projection computed using sklearn.</span>
+<span class="c1"># X contains a multi-dimensional descriptor of the structure</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="o">...</span> <span class="p">)</span>
+<span class="n">pca</span> <span class="o">=</span> <span class="n">sklearn</span><span class="o">.</span><span class="n">decomposition</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+<span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;PCA&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;atom&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">pca</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;energies&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;values&quot;</span><span class="p">:</span> <span class="n">energies</span><span class="p">,</span>
+        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;kcal/mol&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="n">write_input</span><span class="p">(</span><span class="s2">&quot;chemiscope.json.gz&quot;</span><span class="p">,</span> <span class="n">frames</span><span class="o">=</span><span class="n">frames</span><span class="p">,</span> <span class="n">properties</span><span class="o">=</span><span class="n">properties</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="chemiscope.create_input">
+<span class="sig-prename descclassname"><span class="pre">chemiscope.</span></span><span class="sig-name descname"><span class="pre">create_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">meta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#chemiscope.create_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a dictionary that can be saved to JSON using the format used by
+the default chemiscope visualizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frames</strong> (<em>list</em>) – list of atomic structures. For now, only <a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/atoms.html">ase.Atoms</a>
+objects are supported</p></li>
+<li><p><strong>meta</strong> (<em>dict</em>) – optional metadata of the dataset, see below</p></li>
+<li><p><strong>properties</strong> (<em>dict</em>) – optional dictionary of additional properties, see below</p></li>
+<li><p><strong>cutoff</strong> (<em>float</em>) – optional. If present, will be used to generate
+atom-centered environments</p></li>
+<li><p><strong>composition</strong> (<em>bool</em>) – optional. False by default. If True, will add to
+the structure and atom properties information
+about chemical composition</p></li>
+</ul>
+</dd>
+</dl>
+<p>The dataset metadata should be given in the <code class="docutils literal notranslate"><span class="pre">meta</span></code> dictionary, the
+possible keys are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>         <span class="c1"># str, dataset name</span>
+    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;...&#39;</span><span class="p">,</span>  <span class="c1"># str, dataset description</span>
+    <span class="s1">&#39;authors&#39;</span><span class="p">:</span> <span class="p">[</span>           <span class="c1"># list of str, dataset authors, OPTIONAL</span>
+        <span class="s1">&#39;...&#39;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="s1">&#39;references&#39;</span><span class="p">:</span> <span class="p">[</span>        <span class="c1"># list of str, references for this dataset,</span>
+        <span class="s1">&#39;...&#39;</span><span class="p">,</span>             <span class="c1"># OPTIONAL</span>
+    <span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The returned dictionary will contain all the properties defined on the
+<a class="reference external" href="https://wiki.fysik.dtu.dk/ase/ase/atoms.html">ase.Atoms</a> objects. Values in <code class="docutils literal notranslate"><span class="pre">ase.Atoms.arrays</span></code> are mapped to
+<code class="docutils literal notranslate"><span class="pre">target</span> <span class="pre">=</span> <span class="pre">&quot;atom&quot;</span></code> properties; while values in <code class="docutils literal notranslate"><span class="pre">ase.Atoms.info</span></code> are
+mapped to <code class="docutils literal notranslate"><span class="pre">target</span> <span class="pre">=</span> <span class="pre">&quot;structure&quot;</span></code> properties. The only exception is
+<code class="docutils literal notranslate"><span class="pre">ase.Atoms.arrays[&quot;numbers&quot;]</span></code>, which is always ignored. If you want to
+have the atomic numbers as a property, you should add it to <code class="docutils literal notranslate"><span class="pre">properties</span></code>
+manually.</p>
+<p>Additional properties can be added with the <code class="docutils literal notranslate"><span class="pre">properties</span></code> parameter. This
+parameter should be a dictionary containing one entry for each property.
+Each entry contains a <code class="docutils literal notranslate"><span class="pre">target</span></code> attribute (<code class="docutils literal notranslate"><span class="pre">'atom'</span></code> or <code class="docutils literal notranslate"><span class="pre">'structure'</span></code>)
+and a set of values. <code class="docutils literal notranslate"><span class="pre">values</span></code> can be a Python list of float or string; a
+1D numpy array of numeric values; or a 2D numpy array of numeric values. In
+the later case, multiple properties will be generated along the second axis.
+For example, passing</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;cheese&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="s1">&#39;atom&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;values&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+        <span class="c1"># optional: property unit</span>
+        <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="s1">&#39;random / fs&#39;</span><span class="p">,</span>
+        <span class="c1"># optional: property description</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;a random property for example&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>will generate four properties named <code class="docutils literal notranslate"><span class="pre">cheese[1]</span></code>, <code class="docutils literal notranslate"><span class="pre">cheese[2]</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cheese[3]</span></code>,  and <code class="docutils literal notranslate"><span class="pre">cheese[4]</span></code>, each containing 300 values.</p>
+<p>It is also possible to pass shortened representation of the properties, for
+instance:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">properties</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;cheese&#39;</span><span class="p">:</span>  <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">300</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this case, the type of property (structure or atom) would be deduced
+by comparing the numbers atoms and structures in the dataset to the
+length of provided list/np.ndarray.</p>
+</dd></dl>
+
+</section>
+<section id="input-file-structure">
+<h3>Input file structure<a class="headerlink" href="#input-file-structure" title="Permalink to this headline">¶</a></h3>
+<p>If you can not or do not want to use the script mentioned above, you can also
+directly write the JSON file conforming to the schema described here. The input
+file follows closely the <a class="reference external" href="api/interfaces/main.dataset.html">Dataset</a> typescript interface used in the library.
+Using a pseudo-JSON format, the file should contains the following fields and
+values:</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="c1">// metadata of the dataset. `description`, `authors` and `references`</span>
+    <span class="c1">// will be rendered as markdown.</span>
+    <span class="s2">&quot;meta&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="c1">// the name of the dataset</span>
+        <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;this is my name&quot;</span>
+        <span class="c1">// description of the dataset, OPTIONAL</span>
+        <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;This contains data from ...&quot;</span>
+        <span class="c1">// authors of the dataset, OPTIONAL</span>
+        <span class="s2">&quot;authors&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;John Doe&quot;</span><span class="p">,</span> <span class="s2">&quot;Mr Green, green@example.com&quot;</span><span class="p">],</span>
+        <span class="c1">// references for the dataset, OPTIONAL</span>
+        <span class="s2">&quot;references&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="s2">&quot;&#39;A new molecular construction&#39;, Journal of Random Words 19 (1923) pp 3333, DOI: 10.0000/0001100&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&#39;nice website&#39; http://example.com&quot;</span><span class="p">,</span>
+        <span class="p">],</span>
+    <span class="p">},</span>
+
+    <span class="c1">// list of properties in this dataset</span>
+    <span class="s2">&quot;properties&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="c1">// Each property have at least a name, a target and some values.</span>
+        <span class="c1">// Optional entries for the units and descriptions can also be added.</span>
+        <span class="o">&lt;</span><span class="nx">name</span><span class="o">&gt;:</span> <span class="p">{</span>
+            <span class="c1">// the property target: is it defined per atom or for the full</span>
+            <span class="c1">// structures</span>
+            <span class="s2">&quot;target&quot;</span><span class="o">:</span> <span class="s2">&quot;atom&quot;</span> <span class="o">|</span> <span class="s2">&quot;structure&quot;</span><span class="p">,</span>
+            <span class="c1">// values of the properties can either be numbers or strings.</span>
+            <span class="c1">// string properties are assumed to represent categories of</span>
+            <span class="c1">// data.</span>
+            <span class="s2">&quot;values&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">1</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">,</span> <span class="p">...]</span> <span class="o">|</span> <span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;second&quot;</span><span class="p">,</span> <span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="p">...],</span>
+
+            <span class="c1">// OPTIONAL: units of the property&#39; value</span>
+            <span class="s2">&quot;units&quot;</span><span class="o">:</span> <span class="s2">&quot;A/fs^2&quot;</span><span class="p">,</span>
+            <span class="c1">// OPTIONAL: free-form description of the property as a string</span>
+            <span class="s2">&quot;description&quot;</span><span class="o">:</span> <span class="s2">&quot;acceleration of the atoms in the structure ...&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// list of structures in this dataset</span>
+    <span class="s2">&quot;structures&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="c1">// number of atoms in the structure</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="mf">42</span><span class="p">,</span>
+            <span class="c1">// names of the atoms in the structure</span>
+            <span class="s2">&quot;names&quot;</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;O&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="p">...],</span>
+            <span class="c1">// x cartesian coordinate of all the atoms, in Angstroms</span>
+            <span class="s2">&quot;x&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">5.2</span><span class="p">,</span> <span class="p">...],</span>
+            <span class="c1">// y cartesian coordinate of all the atoms, in Angstroms</span>
+            <span class="s2">&quot;y&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">5.7</span><span class="p">,</span> <span class="mf">7</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="p">...],</span>
+            <span class="c1">// z cartesian coordinate of all the atoms, in Angstroms</span>
+            <span class="s2">&quot;z&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">8.1</span><span class="p">,</span> <span class="mf">2.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.3</span><span class="p">,</span> <span class="p">...],</span>
+            <span class="c1">// OPTIONAL: unit cell of the system, if any.</span>
+            <span class="c1">//</span>
+            <span class="c1">// This should be given as [ax ay az bx by bz cx cy cz], where</span>
+            <span class="c1">// a, b, and c are the unit cell vectors. All values are</span>
+            <span class="c1">// expressed in Angstroms.</span>
+            <span class="s2">&quot;cell&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">10</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span> <span class="mf">10</span><span class="p">],</span>
+        <span class="p">},</span>
+        <span class="c1">// other structures as needed</span>
+        <span class="p">...</span>
+    <span class="p">],</span>
+
+    <span class="c1">// OPTIONAL: atom-centered environments descriptions</span>
+    <span class="c1">//</span>
+    <span class="c1">// If present, there should be one environment for each atom in each</span>
+    <span class="c1">// structure.</span>
+    <span class="s2">&quot;environments&quot;</span><span class="o">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="c1">// index of the structure in the above structures list</span>
+            <span class="s2">&quot;structure&quot;</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+            <span class="c1">// index of the central atom in structures</span>
+            <span class="s2">&quot;center&quot;</span><span class="o">:</span> <span class="mf">8</span><span class="p">,</span>
+            <span class="c1">// spherical cutoff radius, expressed in Angstroms</span>
+            <span class="s2">&quot;cutoff&quot;</span><span class="o">:</span> <span class="mf">3.5</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="c1">// more environments</span>
+        <span class="p">...</span>
+    <span class="p">]</span>
+
+    <span class="c1">// OPTIONAL: setting for each panel</span>
+    <span class="c1">//</span>
+    <span class="c1">// Adding these values allow to setup how a given dataset should be</span>
+    <span class="c1">// visualized in chemiscope.</span>
+    <span class="c1">//</span>
+    <span class="c1">// Each value inside the settings group is optional</span>
+    <span class="s2">&quot;settings&quot;</span><span class="o">:</span> <span class="p">{</span>
+        <span class="c1">// settings related to the map</span>
+        <span class="s2">&quot;map&quot;</span><span class="o">:</span> <span class="p">{</span>
+            <span class="c1">// x axis settings</span>
+            <span class="s2">&quot;x&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="c1">// name of the property to use for this axis, this must be</span>
+                <span class="c1">// one of the key from the root `properties` table.</span>
+                <span class="s2">&quot;property&quot;</span><span class="o">:</span> <span class="s2">&quot;&lt;name&gt;&quot;</span><span class="p">,</span>
+                <span class="c1">// should the axis use linear or logarithmic scaling</span>
+                <span class="s2">&quot;scale&quot;</span><span class="o">:</span> <span class="s2">&quot;linear&quot;</span> <span class="o">|</span> <span class="s2">&quot;log&quot;</span><span class="p">,</span>
+                <span class="c1">// lower bound of the axis</span>
+                <span class="s2">&quot;min&quot;</span><span class="o">:</span> <span class="o">-</span><span class="mf">0.23</span><span class="p">,</span>
+                <span class="c1">// upper bound of the axis</span>
+                <span class="s2">&quot;max&quot;</span><span class="o">:</span> <span class="mf">1.42</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="c1">// y axis setting, using the the same keys as x axis setting</span>
+            <span class="s2">&quot;y&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="c1">// ...</span>
+            <span class="p">},</span>
+            <span class="c1">// z axis setting, using the the same keys as x axis setting</span>
+            <span class="s2">&quot;z&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="c1">// property can be set to an empty string to get a 2D map</span>
+                <span class="s2">&quot;property&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="c1">// ...</span>
+            <span class="p">},</span>
+            <span class="c1">// name of the property to use for markers symbols, this must be</span>
+            <span class="c1">// one of the key from the root `properties` table. The</span>
+            <span class="c1">// associated property should have string values</span>
+            <span class="s2">&quot;symbol&quot;</span><span class="o">:</span> <span class="s2">&quot;&lt;name&gt;&quot;</span><span class="p">,</span>
+            <span class="c1">// point color setting, using the the same keys as x axis setting</span>
+            <span class="s2">&quot;color&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="c1">// property can be set to an empty string for uniform color</span>
+                <span class="s2">&quot;property&quot;</span><span class="o">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="c1">// ...</span>
+            <span class="p">},</span>
+            <span class="c1">// Color palette to use, default to &#39;inferno&#39;</span>
+            <span class="s2">&quot;palette&quot;</span><span class="o">:</span> <span class="s2">&quot;cividis&quot;</span><span class="p">,</span>
+            <span class="c1">// settings related to the markers sizes</span>
+            <span class="s2">&quot;size&quot;</span><span class="o">:</span> <span class="p">{</span>
+                <span class="c1">// scaling factor for the axis, between 1 and 100</span>
+                <span class="s2">&quot;factor&quot;</span><span class="o">:</span> <span class="mf">55</span><span class="p">,</span>
+                <span class="c1">// mode to scale the markers with respect to the properties</span>
+                  <span class="c1">// `constant`: all markers are same size, scaled by `factor`</span>
+                  <span class="c1">// `linear`: markers are directly proportional to the property</span>
+                  <span class="c1">// `log`: markers are proportional to the logarithm of the property</span>
+                  <span class="c1">// `sqrt`: markers are proportional to the square root of the property</span>
+                  <span class="c1">// `inverse`: markers are inversely proportional to the property</span>
+                <span class="s2">&quot;mode&quot;</span><span class="o">:</span> <span class="s2">&quot;constant&quot;</span> <span class="o">|</span> <span class="s2">&quot;linear&quot;</span> <span class="o">|</span> <span class="s2">&quot;log&quot;</span> <span class="o">|</span> <span class="s2">&quot;sqrt | &quot;</span><span class="nx">inverse</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                <span class="c1">// name of the property to use for the markers size, this</span>
+                <span class="c1">// must be one of the key from the root `properties` table.</span>
+                <span class="s2">&quot;property&quot;</span><span class="o">:</span> <span class="s2">&quot;&lt;name&gt;&quot;</span><span class="p">,</span>
+                <span class="c1">// if false, markers scale from smallest to largest property value</span>
+                <span class="c1">// if true, marker scale from largest to smallest property value</span>
+                <span class="c1">// in the case of `inverse` scaling, this is reversed.</span>
+                <span class="s2">&quot;reverse&quot;</span><span class="o">:</span> <span class="kc">false</span> <span class="o">|</span> <span class="kc">true</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="c1">// Settings related to the structure viewers grid. This is an array</span>
+        <span class="c1">// containing the settings for each separate viewer</span>
+        <span class="s2">&quot;structure&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="c1">// show bonds between atoms</span>
+                <span class="s2">&quot;bonds&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="c1">//use space filling representation</span>
+                <span class="s2">&quot;spaceFilling&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// show atoms labels</span>
+                <span class="s2">&quot;atomLabels&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// show unit cell information and lines</span>
+                <span class="s2">&quot;unitCell&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// displayed unit cell as a packed cell</span>
+                <span class="s2">&quot;packedCell&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// number of repetitions in the `a/b/c` direction for the supercell</span>
+                <span class="s2">&quot;supercell&quot;</span><span class="o">:</span> <span class="p">[</span><span class="mf">2</span><span class="p">,</span> <span class="mf">2</span><span class="p">,</span> <span class="mf">3</span><span class="p">],</span>
+                <span class="c1">// make the molecule spin</span>
+                <span class="s2">&quot;rotation&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// which axis system to use</span>
+                <span class="s2">&quot;axes&quot;</span><span class="o">:</span> <span class="s2">&quot;none&quot;</span> <span class="o">|</span> <span class="s2">&quot;xyz&quot;</span> <span class="o">|</span> <span class="s2">&quot;abc&quot;</span><span class="p">,</span>
+                <span class="c1">// keep the orientation constant when loading a new structure</span>
+                <span class="s2">&quot;keepOrientation&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                <span class="c1">// options related to atom-centered environments</span>
+                <span class="s2">&quot;environments&quot;</span><span class="o">:</span> <span class="p">{</span>
+                    <span class="c1">// should we display environments &amp; environments options</span>
+                    <span class="s2">&quot;activated&quot;</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+                    <span class="c1">// automatically center the environment when loading it</span>
+                    <span class="s2">&quot;center&quot;</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+                    <span class="c1">// the cutoff value for spherical environments</span>
+                    <span class="s2">&quot;cutoff&quot;</span><span class="o">:</span> <span class="mf">3.5</span>
+                    <span class="c1">// which style for atoms not in the environment</span>
+                    <span class="s2">&quot;bgStyle&quot;</span><span class="o">:</span> <span class="s2">&quot;licorice&quot;</span> <span class="o">|</span> <span class="s2">&quot;ball-stick&quot;</span> <span class="o">|</span> <span class="s2">&quot;hide&quot;</span><span class="p">,</span>
+                    <span class="c1">// which colors for atoms not in the environment</span>
+                    <span class="s2">&quot;bgColor&quot;</span><span class="o">:</span> <span class="s2">&quot;grey&quot;</span> <span class="o">|</span> <span class="s2">&quot;CPK&quot;</span><span class="p">,</span>
+                <span class="p">};</span>
+            <span class="p">},</span>
+            <span class="c1">// ...</span>
+        <span class="p">]</span>
+        <span class="c1">// List of environments to display (up to 9). These environments</span>
+        <span class="c1">// will be shown in the structure viewer grid and indicated on</span>
+        <span class="c1">// the map.</span>
+        <span class="c1">//</span>
+        <span class="c1">// This list should containg 0-based indexes of the environment in</span>
+        <span class="c1">// the root &quot;environments&quot; object; or of the structure in the root</span>
+        <span class="c1">// &quot;environments&quot; if no environments are present.</span>
+        <span class="c1">//</span>
+        <span class="c1">// If both this list and the &quot;structure&quot; settings list above are</span>
+        <span class="c1">// present, they should have the same size and will be used together</span>
+        <span class="c1">// (first element of &quot;structure&quot; setting used for the first &quot;pinned&quot;</span>
+        <span class="c1">// value; and so on).</span>
+        <span class="c1">//</span>
+        <span class="c1">// This defaults to [0], i.e. showing only the first</span>
+        <span class="c1">// environment/structure.</span>
+        <span class="s2">&quot;pinned&quot;</span><span class="o">:</span> <span class="p">[</span>
+            <span class="mf">33</span><span class="p">,</span> <span class="mf">67</span><span class="p">,</span> <span class="mf">12</span><span class="p">,</span> <span class="mf">0</span><span class="p">,</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="using-the-standalone-visualizer">
+<h2>Using the standalone visualizer<a class="headerlink" href="#using-the-standalone-visualizer" title="Permalink to this headline">¶</a></h2>
+<p>The default chemiscope interface lives online, at <a class="reference external" href="https://chemiscope.org/">https://chemiscope.org/</a>. But
+there are some cases where you do not want to use an online tool for your own
+dataset, such as scientific article supplementation information. For these use
+cases, a standalone, mostly offline visualizer exists that uses the same input
+file format as the default interface. You can download the latest version of the
+standalone viewer at
+<a class="reference download external" download="" href="https://chemiscope.org/chemiscope_standalone.html"><code class="xref download docutils literal notranslate"><span class="pre">https://chemiscope.org/chemiscope_standalone.html</span></code></a>.</p>
+<p>This file contains all the required HTML and JavaScript code for chemiscope.
+You can then add your own dataset by adding the corresponding JSON file at the
+end of the <code class="docutils literal notranslate"><span class="pre">chemiscope_standalone.html</span></code> file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cat chemiscope_standalone.html my-dataset.json &gt; my-dataset.html
+</pre></div>
+</div>
+<p>To re-build the <code class="docutils literal notranslate"><span class="pre">chemiscope_standalone.html</span></code> file from sources, please follow
+the steps below:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/cosmo-epfl/chemiscope
+<span class="nb">cd</span> chemiscope
+npm install
+npm run build
+python3 ./utils/generate_standalone.py
+</pre></div>
+</div>
+</section>
+</section>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2021, Guillaume Fraux.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
